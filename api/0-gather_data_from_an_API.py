@@ -19,7 +19,9 @@ def main():
         todos = requests.get(todos_url).json()
         completed = [t['title'] for t in todos if t['completed']]
 
-        print(f"Employee {user['name']} is done with tasks({len(completed)}/{len(todos)}):")
+        output = (f"Employee {user['name']} is done with "
+                 f"tasks({len(completed)}/{len(todos)}):")
+        print(output)
         for task in completed:
             print(f"\t {task}")
 
