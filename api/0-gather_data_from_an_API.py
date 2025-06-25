@@ -32,5 +32,5 @@ def main():
         print("\t {}".format(q))
 
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     main()
