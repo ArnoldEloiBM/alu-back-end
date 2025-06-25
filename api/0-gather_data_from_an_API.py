@@ -6,23 +6,16 @@ Using a REST API to return info about their TODO list.
 import requests
 import sys
 
-
 if __name__ == "__main__":
-    """ main section """
-    BASE_URL = 'https://jsonplaceholder.typicode.com'
-    employee = requests.get(
-        BASE_URL + f'/users/{sys.argv[1]}/').json()
-    EMPLOYEE_NAME = employee.get("name")
-    employee_todos = requests.get(
-        BASE_URL + f'/users/{sys.argv[1]}/todos').json()
-    serialized_todos = {}
-
-    for todo in employee_todos:
-        serialized_todos.update({todo.get("title"): todo.get("completed")})
-
-    COMPLETED_LEN = len([k for k, v in serialized_todos.items() if v is True])
-    print("Employee {} is done with tasks({}/{}):".format(
-        EMPLOYEE_NAME, COMPLETED_LEN, len(serialized_todos)))
-    for key, val in serialized_todos.items():
-        if val is True:
-            print("\t {}".format(key))
+    if len(sys.argv) != 2:
+        sys.exit("Usage: ./0-gather_data_from_an_API.py <employee_id>")
+    
+    try:
+        uid = sys.argv[1]
+        user = requests.get(f"https://jsonplaceholder.typicode.com/users/{uid}").json()
+        todos = requests.get(f"https://jsonplaceholder.typicode.com/users/{uid}/todos").json()
+        done = [t['title'] for t in todos if t['completed']]
+        print(f"Employee {user['name']} is done with tasks({len(done)}/{len(todos)}):")
+        [print(f"\t {task}") for task in done]
+    except Exception:
+        sys.exit("Error fetching data")
