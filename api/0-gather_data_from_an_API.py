@@ -2,35 +2,35 @@
 """
 Using a REST API to return info about their TODO list.
 """
-
 import requests
 import sys
 
-
 def main():
-    """Main function to fetch and display employee TODO progress."""
-    if len(sys.argv) != 2:
-        sys.exit("Usage: ./0-gather_data_from_an_API.py <employee_id>")
+    """main function"""
+    user_id = int(sys.argv[1])
+    todo_url = 'https://jsonplaceholder.typicode.com/todos'
+    user_url = 'https://jsonplaceholder.typicode.com/users/{}'.format(user_id)
 
-    try:
-        employee_id = sys.argv[1]
-        base_url = "https://jsonplaceholder.typicode.com"
-        user_url = f"{base_url}/users/{employee_id}"
-        todos_url = f"{base_url}/users/{employee_id}/todos"
+    response = requests.get(todo_url)
 
-        user = requests.get(user_url).json()
-        todos = requests.get(todos_url).json()
-        completed = [t['title'] for t in todos if t['completed']]
+    total_questions = 0
+    completed = []
+    for todo in response.json():
 
-        print(f"Employee {user['name']} is done with tasks({len(completed)}/{len(todos)}):")
-        for task in completed:
-            print(f"\t {task}")
+        if todo['userId'] == user_id:
+            total_questions += 1
 
-    except requests.exceptions.RequestException:
-        sys.exit("Error fetching data")
-    except ValueError:
-        sys.exit("Invalid employee ID")
+            if todo['completed']:
+                completed.append(todo['title'])
+
+    user_name = requests.get(user_url).json()['name']
+
+    printer = ("Employee {} is done with tasks({}/{}):".format(user_name,
+               len(completed), total_questions))
+    print(printer)
+    for q in completed:
+        print("\t {}".format(q))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
